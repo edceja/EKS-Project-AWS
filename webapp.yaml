@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp-deployment
+  labels:
+    app: webapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: webapp
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: webapp
+    spec:
+      serviceAccountName: my-service-account
+      containers:
+      - name: frontend
+        image: 245843769871.dkr.ecr.us-west-1.amazonaws.com/myimages:appfinal
+        ports: 
+        - containerPort: 3000
+        env:
+         - name: API_URL
+           value: k8s-default-ingressa-ee285ec5b0-1896703878.us-west-1.elb.amazonaws.com
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp-service
+spec:
+  type: NodePort
+  selector:
+    app.kubernetes.io/name: webapp
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-web-app
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    kubernetes.io/ingress.class: alb    
+spec:
+  ingressClassName: alb
+  rules:
+    - http:
+        paths:
+        - pathType: Prefix
+          path: /
+          backend:
+            service:
+              name: webapp-service
+              port:
+                number: 80
+
+
+
+
+

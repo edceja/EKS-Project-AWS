@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-deployment
+  labels:
+    app: fastapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: fastapi
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: fastapi
+    spec:
+      serviceAccountName: my-service-account
+      containers:
+      - name: backend
+        image: 245843769871.dkr.ecr.us-west-1.amazonaws.com/myimages:apiv2
+        ports: 
+        - containerPort: 8000
+        env:
+         - name: FRONT_END_ORIGIN
+           value: front_end__ingress
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-service
+spec:
+  type: NodePort
+  selector:
+    app.kubernetes.io/name: fastapi
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-api
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/success-codes: 200-399
+spec:
+  ingressClassName: alb
+  rules:
+    - http:
+        paths:
+        - pathType: Prefix
+          path: /generate-qr/
+          backend:
+            service:
+              name: api-service
+              port:
+                number: 80
+
+
