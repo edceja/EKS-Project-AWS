@@ -18,7 +18,7 @@ app = FastAPI()
 front_end_URL= os.environ.get('FRONT_END_ORIGIN')
 
 origins = [ 
-    "*"
+    "front_end_URL"
 ]
 
 #Updated CORS origin to all 
@@ -32,7 +32,7 @@ app.add_middleware(
 
 # AWS S3 Configuration
 s3 = boto3.client('s3')
-bucket_name = 'k8projectbucket' # Add your bucket name here
+bucket_name = 'mybucket' # Add your bucket name here
 
 @app.post("/generate-qr/")
 async def generate_qr(url: str):
