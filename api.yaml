@@ -17,7 +17,7 @@ spec:
       serviceAccountName: my-service-account
       containers:
       - name: backend
-        image: 245843769871.dkr.ecr.us-west-1.amazonaws.com/myimages:apiv2
+        image: <acct-ID>.dkr.ecr.<region>.amazonaws.com/myimages:apiv2
         ports: 
         - containerPort: 8000
         env:
