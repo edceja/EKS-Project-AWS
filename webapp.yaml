@@ -17,12 +17,12 @@ spec:
       serviceAccountName: my-service-account
       containers:
       - name: frontend
-        image: 245843769871.dkr.ecr.us-west-1.amazonaws.com/myimages:appfinal
+        image: <acct-ID>.dkr.ecr.<region>.amazonaws.com/myimages:appfinal
         ports: 
         - containerPort: 3000
         env:
          - name: API_URL
-           value: k8s-default-ingressa-ee285ec5b0-1896703878.us-west-1.elb.amazonaws.com
+           value: <ingress_URL>
 ---
 apiVersion: v1
 kind: Service
